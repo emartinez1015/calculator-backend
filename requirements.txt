@@ -1,0 +1,6 @@
+chalice==1.28.0
+psycopg2-binary
+peewee
+requests
+pyjwt
+cognitojwt

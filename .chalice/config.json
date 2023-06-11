@@ -1,0 +1,21 @@
+{
+  "version": "2.0",
+  "app_name": "calculator-backend",
+  "stages": {
+    "dev": {
+      "api_gateway_stage": "api",
+      "environment_variables": {
+        "POSTGRES_HOST": "true-north-demo.cyksjhzwdemb.us-east-2.rds.amazonaws.com",
+        "POSTGRES_PORT": "5432",
+        "POSTGRES_DB": "postgres",
+        "POSTGRES_USER": "postgres",
+        "POSTGRES_PASSWORD": "Cx52023..",
+        "USER_POOL_ID": "us-east-2_s2lUrg6cO",
+        "USER_POOL_REGION": "us-east-2",
+        "AWS_ACCOUNT_ID": "583847475803",
+        "COGNITO_CLIENT_ID": "5tuhdccsdsev7mqkhgm0r8msgh"
+      },
+      "autogen_policy": true
+    }
+  }
+}

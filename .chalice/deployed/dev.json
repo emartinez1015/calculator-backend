@@ -1,0 +1,28 @@
+{
+  "resources": [
+    {
+      "name": "default-role",
+      "resource_type": "iam_role",
+      "role_arn": "arn:aws:iam::583847475803:role/calculator-backend-dev",
+      "role_name": "calculator-backend-dev"
+    },
+    {
+      "name": "api_handler",
+      "resource_type": "lambda_function",
+      "lambda_arn": "arn:aws:lambda:us-east-2:583847475803:function:calculator-backend-dev"
+    },
+    {
+      "name": "cognito_auth_wrapper",
+      "resource_type": "lambda_function",
+      "lambda_arn": "arn:aws:lambda:us-east-2:583847475803:function:calculator-backend-dev-cognito_auth_wrapper"
+    },
+    {
+      "name": "rest_api",
+      "resource_type": "rest_api",
+      "rest_api_id": "ky23idqdol",
+      "rest_api_url": "https://ky23idqdol.execute-api.us-east-2.amazonaws.com/api/"
+    }
+  ],
+  "schema_version": "2.0",
+  "backend": "api"
+}
