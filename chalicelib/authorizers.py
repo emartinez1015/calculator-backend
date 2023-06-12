@@ -43,7 +43,10 @@ def cognito_auth(auth_request):
                             'arn:aws:execute-api:us-east-2:583847475803:ky23idqdol/*/GET/v1/records',
                             'arn:aws:execute-api:us-east-2:583847475803:ky23idqdol/*/DELETE/v1/records/*',
                             'arn:aws:execute-api:us-east-2:583847475803:ky23idqdol/*/POST/v1/signout',
-                            'arn:aws:execute-api:us-east-2:583847475803:ky23idqdol/*/GET/v1/random-string'
+                            'arn:aws:execute-api:us-east-2:583847475803:ky23idqdol/*/GET/v1/random-string',      
+                            'arn:aws:execute-api:mars-west-1:123456789012:ymy8tbxw7b/api/GET/v1/operations',
+                            'arn:aws:execute-api:mars-west-1:123456789012:ymy8tbxw7b/api/GET/v1/random-string',
+                            'arn:aws:execute-api:mars-west-1:123456789012:ymy8tbxw7b/api/POST/v1/records'
                         ]
                     }
                 ]
