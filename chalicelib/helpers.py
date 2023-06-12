@@ -29,7 +29,7 @@ def perform_operation(num1, num2, symbol):
     if not num1.isnumeric():
         return num1
     try:
-        expression = f"math.sqrt({num1})" if symbol == "√" else f"{int(num1)} {symbol} {int(num2)}"
+        expression = f"math.sqrt({int(num1)})" if symbol == "√" else f"{int(num1)} {symbol} {int(num2)}"
         result = eval(expression)
         return result
     except (ValueError, SyntaxError) as e:
