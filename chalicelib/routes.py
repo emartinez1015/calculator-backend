@@ -1,7 +1,7 @@
 import boto3
 import requests
 from chalice import BadRequestError, Blueprint, ChaliceViewError, Response
-from chalicelib.authorizers import cognito_auth
+from chalicelib.authorizers import CognitoAuthSingleton
 from chalicelib.helpers import generate_random_url, perform_operation
 from chalicelib.models import Operation, Record, User
 from datetime import datetime
@@ -12,14 +12,24 @@ from chalicelib.config import USER_POOL_REGION, COGNITO_CLIENT_ID
 routes = Blueprint(__name__)
 api_version = 'v1'
 base_path = f'/{api_version}'
+auth_singleton = CognitoAuthSingleton.get_instance()
 
 @routes.authorizer()
 def cognito_auth_wrapper(auth_request):
-    return cognito_auth(auth_request)
+    """
+    Wrapper function for Cognito authentication.
+    Authenticates the request and returns the policy document.
+    """
+    policy_document = auth_singleton.authenticate_request(auth_request)
+    return policy_document
 
 
 @routes.route(f'{base_path}/operations', methods=['GET'], authorizer=cognito_auth_wrapper)
 def get_operations():
+    """
+    Retrieves all operations.
+    Returns a response containing the serialized data.
+    """
     operations = Operation.select().execute()
     serialized_data = [model_to_dict(op) for op in operations]
     return Response(
@@ -30,6 +40,10 @@ def get_operations():
 
 @routes.route(f'{base_path}/records', methods=['GET'], authorizer=cognito_auth_wrapper)
 def get_records():
+    """
+    Retrieves paginated records based on the query parameters.
+    Returns a response containing the serialized data and total record count.
+    """
     page = int(routes.current_request.query_params.get('page', 1))
     per_page = int(routes.current_request.query_params.get('per_page', 10))
     operation_type = routes.current_request.query_params.get('operation_type')
@@ -65,6 +79,10 @@ def get_records():
 
 @routes.route(f'{base_path}/records', methods=['POST'], authorizer=cognito_auth_wrapper)
 def create_record():
+    """
+    Creates a new record based on the request data.
+    Returns a response containing the created record data.
+    """
     request_data = routes.current_request.json_body
     operation_id = request_data['operation_id']
     num1 = request_data['num1']
@@ -104,6 +122,10 @@ def create_record():
 
 @routes.route(f'{base_path}/records/{{record_id}}', methods=['DELETE'], authorizer=cognito_auth_wrapper)
 def soft_delete_record(record_id):
+    """
+    Soft deletes a record with the given record_id.
+    Returns a response indicating the success or failure of the deletion.
+    """
     try:
         record = Record.get(Record.id == record_id)
         record.active = False
@@ -121,6 +143,10 @@ def soft_delete_record(record_id):
 
 @routes.route(f'{base_path}/random-string', methods=['GET'], authorizer=cognito_auth_wrapper)
 def random_string():
+    """
+    Generates random strings based on the query parameter 'numeric'.
+    Returns a response containing the generated strings.
+    """
     query_params = routes.current_request.query_params
     is_numeric = query_params.get('numeric')
 
@@ -139,6 +165,10 @@ def random_string():
 
 @routes.route(f'{base_path}/signup', methods=['POST'])
 def signup():
+    """
+    Handles user sign up request.
+    Creates a new user and returns a response indicating the success or failure of the sign up.
+    """
     request_body = routes.current_request.json_body
     username = request_body['username']
     password = request_body['password']
@@ -174,6 +204,10 @@ def signup():
 
 @routes.route(f'{base_path}/signin', methods=['POST'])
 def signin():
+    """
+    Handles user sign in request.
+    Authenticates the user and returns a response containing the access token and user data.
+    """
     request_body = routes.current_request.json_body
     username = request_body['username']
     password = request_body['password']
@@ -215,17 +249,21 @@ def signin():
         )
 
 
-
 @routes.route(f'{base_path}/signout', methods=['POST'], authorizer=cognito_auth_wrapper)
 def signout():
+    """
+    Handles user sign out request.
+    Signs out the user by invalidating the access token.
+    Returns a response indicating the success or failure of the sign out.
+    """
     access_token = routes.current_request.json_body['access_token']
     client = boto3.client('cognito-idp', region_name=USER_POOL_REGION)
-    
+
     try:
         response = client.global_sign_out(
             AccessToken=access_token
         )
-        
+
         return Response(
             body={'message': 'Sign out successful'},
             status_code=200
@@ -239,6 +277,11 @@ def signout():
 
 @routes.route(f'{base_path}/confirm', methods=['POST'])
 def confirm():
+    """
+    Handles user confirmation request.
+    Confirms the user account using the provided confirmation code.
+    Returns a response indicating the success or failure of the confirmation.
+    """
     request_body = routes.current_request.json_body
     username = request_body['username']
     confirmation_code = request_body['confirmation_code']

@@ -10,7 +10,6 @@ cors_config = CORSConfig(
 )
 
 app = Chalice(app_name='calculator-backend')
-
 app.api.cors = cors_config
 app.register_blueprint(routes)
 
